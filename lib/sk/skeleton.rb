@@ -7,14 +7,14 @@ module Sk
 
     attr_accessor :name
 
-    def initialize(name, &block)
+    def initialize(name)
       @name = name
 
       # check if dir already exists!
       FileUtils.mkdir(@name)
       FileUtils.cd(@name)
 
-      block.call self
+      yield self
 
       # go back!
       FileUtils.cd('..')
@@ -26,14 +26,22 @@ module Sk
 
     alias :touch :file
 
-    def dir(name, &block)
+    def dir(name)
       FileUtils.mkdir(name)
       FileUtils.cd(name)
 
-      block.call if block
+      yield if block_given?
 
       FileUtils.cd('..')
     end
 
   end
 end
+
+# Sk::Skeleton.new 'test' do |sk|
+#   sk.dir 'folder1' do
+#     sk.dir 'folder2'
+#     sk.touch 'level1'
+#   end
+#   sk.touch 'level0'
+# end
